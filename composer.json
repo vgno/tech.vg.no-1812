@@ -1,6 +1,6 @@
 {
-    "name": "vgnett/tech.vg.no-1252",
-    "description": "Repository describing how to enable PHP's build in web server for Behat tests",
+    "name": "vgnett/tech.vg.no-1812",
+    "description": "Repository describing how to generate a code coverage report from Behat tests",
     "license": "MIT",
     "authors": [
         {
@@ -10,6 +10,6 @@
     ],
     "require": {
         "php": ">=5.4.0",
-        "behat/behat": "2.5.0"
+        "behat/behat": "~2.5"
     }
 }
