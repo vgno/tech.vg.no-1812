@@ -1,6 +1,6 @@
-tech.vg.no-1252
+tech.vg.no-1852
 ===============
-Repository for blog post: Using PHP's built-in web server in Behat tests: http://tech.vg.no/2013/08/16/using-phps-built-in-web-server-in-behat-tests/
+Repository for blog post: Generating code coverage of Behat tests
 
 Running
 =======
