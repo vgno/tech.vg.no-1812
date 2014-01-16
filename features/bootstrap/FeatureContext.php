@@ -1,6 +1,11 @@
 <?php
 use Behat\Behat\Context\BehatContext,
-    Behat\Behat\Event\SuiteEvent;
+    Behat\Behat\Event\SuiteEvent,
+    Guzzle\Http\Client;
+
+require 'PHP/CodeCoverage.php';
+require 'PHP/CodeCoverage/Filter.php';
+require 'PHP/CodeCoverage/Report/HTML.php';
 
 /**
  * Features context
@@ -19,6 +24,33 @@ class FeatureContext extends BehatContext {
      * @var string
      */
     private static $testSessionId;
+
+    /**
+     * Guzzle client used to make requests against the httpd
+     *
+     * @var Client
+     */
+    protected $client;
+
+    /**
+     * Class constructor
+     *
+     * @param array $parameters Context parameters
+     */
+    public function __construct(array $parameters) {
+        $this->params = $parameters;
+        $this->client = new Client($this->params['url']);
+
+        $defaultHeaders = array(
+            'X-Test-Session-Id' => self::$testSessionId,
+        );
+
+        if ($this->params['enableCodeCoverage']) {
+            $defaultHeaders['X-Enable-Coverage'] = 1;
+        }
+
+        $this->client->setDefaultHeaders($defaultHeaders);
+    }
 
     /**
      * Start up the web server
@@ -77,6 +109,31 @@ class FeatureContext extends BehatContext {
      * @AfterSuite
      */
     public static function tearDown(SuiteEvent $event) {
+        $parameters = $event->getContextParameters();
+
+        if ($parameters['enableCodeCoverage']) {
+            $client = new Client($parameters['url']);
+            $response = $client->get('/', array(
+                'X-Enable-Coverage' => 1,
+                'X-Test-Session-Id' => self::$testSessionId,
+                'X-Collect-Coverage' => 1,
+            ))->send();
+
+            $data = unserialize((string) $response->getBody());
+
+            $filter = new PHP_CodeCoverage_Filter();
+
+            foreach ($parameters['whitelist'] as $dir) {
+                $filter->addDirectoryToWhitelist($dir);
+            }
+
+            $coverage = new PHP_CodeCoverage(null, $filter);
+            $coverage->append($data, 'behat-suite');
+
+            $report = new PHP_CodeCoverage_Report_HTML();
+            $report->process($coverage, $parameters['coveragePath']);
+        }
+
         if (self::$pid) {
             self::killProcess(self::$pid);
         }
