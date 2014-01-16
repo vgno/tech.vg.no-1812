@@ -14,6 +14,13 @@ class FeatureContext extends BehatContext {
     private static $pid;
 
     /**
+     * A session ID for this test session
+     *
+     * @var string
+     */
+    private static $testSessionId;
+
+    /**
      * Start up the web server
      *
      * @BeforeSuite
@@ -32,7 +39,8 @@ class FeatureContext extends BehatContext {
         self::$pid = self::startBuiltInHttpd(
             $url['host'],
             $port,
-            $params['documentRoot']
+            $params['documentRoot'],
+            $params['router']
         );
 
         if (!self::$pid) {
@@ -59,6 +67,8 @@ class FeatureContext extends BehatContext {
                 )
             );
         }
+
+        self::$testSessionId = uniqid('behat-coverage-', true);
     }
 
     /**
@@ -113,14 +123,16 @@ class FeatureContext extends BehatContext {
      * @param string $host The hostname to use
      * @param int $port The port to use
      * @param string $documentRoot The document root
+     * @param string $router Path to an optional router
      * @return int Returns the PID of the httpd
      */
-    private static function startBuiltInHttpd($host, $port, $documentRoot) {
+    private static function startBuiltInHttpd($host, $port, $documentRoot, $router = null) {
         // Build the command
-        $command = sprintf('php -S %s:%d -t %s >/dev/null 2>&1 & echo $!',
+        $command = sprintf('php -S %s:%d -t %s %s >/dev/null 2>&1 & echo $!',
                             $host,
                             $port,
-                            $documentRoot);
+                            $documentRoot,
+                            $router);
 
         $output = array();
         exec($command, $output);

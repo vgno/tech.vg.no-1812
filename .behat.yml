@@ -9,3 +9,17 @@ default:
 
       # How many seconds will we allow the httpd to use when starting?
       timeout: 1
+
+      # Path to the router
+      router: router.php
+
+      # Whether or not to collect code coverage
+      enableCodeCoverage: true
+
+      # Path to store the generated code coverage report
+      coveragePath: build/behat-coverage
+
+      # White list of directories to collect coverage about
+      whitelist:
+        - library
+        - public
