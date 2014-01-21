@@ -1,6 +1,6 @@
 <?php
 if (isset($_SERVER['HTTP_X_COLLECT_COVERAGE']) && isset($_SERVER['HTTP_X_TEST_SESSION_ID'])) {
-    require __DIR__ . '/../vendor/autoload.php';
+    require __DIR__ . '/vendor/autoload.php';
 
     // Output code coverage stored in the .cov files
     $coverageDir = sys_get_temp_dir() . '/behat-coverage';
