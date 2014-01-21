@@ -11,6 +11,7 @@
     "require": {
         "php": ">=5.4.0",
         "behat/behat": "~2.5",
-        "phpunit/php-code-coverage": "~1.2"
+        "phpunit/php-code-coverage": "~1.2",
+        "guzzle/guzzle": "~3.8"
     }
 }
